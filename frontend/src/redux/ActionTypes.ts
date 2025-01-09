@@ -2,6 +2,10 @@ export const LOGIN_INIT = "LOGIN_INIT";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAIL = "LOGIN_FAIL";
 
+export const AUTH_INIT = "AUTH_INIT";
+export const AUTH_SUCCESS = "AUTH_SUCCESS";
+export const AUTH_FAIL = "AUTH_FAIL";
+
 export const TEST_INIT = "TEST_INIT";
 export const TEST_SUCCESS = "TEST_SUCCESS";
 export const TEST_FAIL = "TEST_FAIL";

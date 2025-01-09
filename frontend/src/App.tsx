@@ -10,15 +10,29 @@ import LoginRegister from "./pages/login";
 import Sidebar from "./components/Sidebar";
 import TaskPage from "./pages/task";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { me } from "./redux/user/actions";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true); // User is logged in if token exists
-    }
-  }, []);
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const res = await dispatch(me());
+        if (res?.status === 200) {
+          setIsLoggedIn(true);
+        } else {
+          localStorage.clear();
+          setIsLoggedIn(false);
+        }
+        console.log("res", res);
+      }
+    };
+    fetchUser();
+  }, [dispatch]);
 
   return (
     <>
@@ -26,7 +40,7 @@ function App() {
       <Router>
         <div className="flex h-screen w-full">
           {/* Show Sidebar only if user is logged in */}
-          {isLoggedIn && <Sidebar />}
+          {isLoggedIn && <Sidebar setIsLoggedIn={setIsLoggedIn} />}
 
           <div
             className={`bg-gray-100 h-screen overflow-y-auto ${

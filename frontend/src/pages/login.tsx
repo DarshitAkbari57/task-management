@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Input, Button } from "antd";
-import { login } from "../redux/user/actions"; // Assume register action is implemented
+import { login, register } from "../redux/user/actions";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { generatePopup } from "../utility/popup";
@@ -8,7 +8,7 @@ import { generatePopup } from "../utility/popup";
 const LoginRegister = ({ setIsLoggedIn }: any) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-  const [isLoginMode, setIsLoginMode] = useState<boolean>(true); // Toggle between Login and Register
+  const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -20,23 +20,38 @@ const LoginRegister = ({ setIsLoggedIn }: any) => {
         const res: any = await dispatch(login(values));
         if (res?.status === 200) {
           localStorage.setItem("token", res?.data?.token);
+          generatePopup("success", "Login successfully.");
           form.resetFields();
-          generatePopup("success", res?.message);
           setIsLoggedIn(true);
           navigate("/task");
+        } else {
+          generatePopup(
+            "error",
+            res?.response?.data?.message ||
+              res?.response?.data?.error ||
+              "Something went wrong!"
+          );
         }
       } else {
         // Handle Register
-        // const res = await dispatch(register(values));
-        const res: any = "";
-        if (res?.status === 201) {
-          generatePopup("success", "Registration successful! Please log in.");
+        const res: any = await dispatch(register(values));
+        console.log("res", res);
+        if (res?.status === 200) {
+          localStorage.setItem("token", res?.data?.token);
+          generatePopup("success", "Registration successfully.");
           form.resetFields();
-          setIsLoginMode(true); // Switch to login form
+          setIsLoggedIn(true);
+          navigate("/task");
+        } else {
+          generatePopup(
+            "error",
+            res?.response?.data?.message ||
+              res?.response?.data?.error ||
+              "Something went wrong!"
+          );
         }
       }
-    } catch (err) {
-      console.error("Error:", err);
+    } catch (err: any) {
       generatePopup(
         "error",
         err?.response?.data?.message || "Something went wrong!"
@@ -54,12 +69,23 @@ const LoginRegister = ({ setIsLoggedIn }: any) => {
         </h1>
         <Form form={form} layout="vertical" onFinish={handleFinish}>
           <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: "Please enter your username!" }]}
+            label="email"
+            name="email"
+            rules={[{ required: true, message: "Please enter your email!" }]}
           >
-            <Input placeholder="Enter your username" />
+            <Input placeholder="Enter your email" />
           </Form.Item>
+          {!isLoginMode && (
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[
+                { required: true, message: "Please enter your username!" },
+              ]}
+            >
+              <Input placeholder="Enter your username" />
+            </Form.Item>
+          )}
           <Form.Item
             label="Password"
             name="password"

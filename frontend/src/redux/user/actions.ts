@@ -45,14 +45,14 @@ import { apiGet, apiPost } from "../axios";
 //   };
 // };
 
-export const login = (payload, dispatch) => {
-  return async (dispatch) => {
+export const login = (payload: any, dispatch: any) => {
+  return async (dispatch: any) => {
     dispatch({
       type: actionTypes.LOGIN_INIT,
     });
 
     try {
-      const response = await apiPost("login", payload);
+      const response: any = await apiPost("login", payload);
       if (response.status === 201) {
         dispatch({
           type: actionTypes.LOGIN_SUCCESS,
@@ -66,9 +66,73 @@ export const login = (payload, dispatch) => {
         });
         return response.data;
       }
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: actionTypes.LOGIN_FAIL,
+        payload: error?.data?.message,
+      });
+      return error;
+    }
+  };
+};
+
+export const register = (payload: any, dispatch: any) => {
+  return async (dispatch: any) => {
+    dispatch({
+      type: actionTypes.LOGIN_INIT,
+    });
+
+    try {
+      const response: any = await apiPost("register", payload);
+      if (response.status === 201) {
+        dispatch({
+          type: actionTypes.LOGIN_SUCCESS,
+          payload: response.data,
+        });
+        return response.data;
+      } else {
+        dispatch({
+          type: actionTypes.LOGIN_FAIL,
+          payload: response?.data?.message,
+        });
+        return response.data;
+      }
+    } catch (error: any) {
+      dispatch({
+        type: actionTypes.LOGIN_FAIL,
+        payload: error?.data?.message,
+      });
+      return error;
+    }
+  };
+};
+
+export const me = (payload: any, dispatch: any) => {
+  const token = localStorage.getItem("token");
+  return async (dispatch: any) => {
+    dispatch({
+      type: actionTypes.LOGIN_INIT,
+    });
+
+    try {
+      const response: any = await apiGet("me", token);
+      console.log("response", response);
+      if (response.status === 200) {
+        dispatch({
+          type: actionTypes.AUTH_SUCCESS,
+          payload: response.data,
+        });
+        return response.data;
+      } else {
+        dispatch({
+          type: actionTypes.AUTH_FAIL,
+          payload: response?.data?.message,
+        });
+        return response.data;
+      }
+    } catch (error: any) {
+      dispatch({
+        type: actionTypes.AUTH_FAIL,
         payload: error?.data?.message,
       });
       return error;

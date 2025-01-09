@@ -1,11 +1,27 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<{ setIsLoggedIn: (loggedIn: boolean) => void }> = ({
+  setIsLoggedIn,
+}) => {
+  const navigate = useNavigate();
+  const userData = useSelector((state: any) => state.User.users?.data);
+  const userName = userData?.username;
+  const userEmail = userData?.email;
+
+  const handleLogout = () => {
+    // Implement logout logic here
+    console.log("Logout clicked");
+    localStorage.clear();
+    setIsLoggedIn(false);
+    navigate("/");
+  };
+
   return (
-    <div className="w-64 h-full bg-gray-800 text-white">
+    <div className="w-64 h-full bg-gray-800 text-white flex flex-col">
       <h2 className="p-4 text-lg font-bold">App Sidebar</h2>
-      <nav>
+      <nav className="flex-1">
         <ul className="space-y-2">
           <li>
             <Link to="/task" className="block px-4 py-2 hover:bg-gray-700">
@@ -15,6 +31,18 @@ const Sidebar: React.FC = () => {
           {/* Add more links as needed */}
         </ul>
       </nav>
+      <div className="mt-auto p-4 bg-gray-700 rounded-t-lg">
+        <div className="text-center mb-2">
+          <p className="font-semibold">{userName}</p>
+          <p className="text-sm text-gray-400">{userEmail}</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full py-2 mt-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-bold transition duration-200"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };

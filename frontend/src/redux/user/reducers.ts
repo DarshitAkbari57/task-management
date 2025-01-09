@@ -5,7 +5,7 @@ const initialState = {
   users: [],
 };
 
-const UserReducer = (state = initialState, action) => {
+const UserReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case actionTypes.TEST_INIT:
       return {
@@ -21,16 +21,16 @@ const UserReducer = (state = initialState, action) => {
         ...state,
         error: "",
       };
-    case actionTypes.GET_USER_INIT:
+    case actionTypes.AUTH_INIT:
       return {
         ...state,
       };
-    case actionTypes.GET_USER_SUCCESS:
+    case actionTypes.AUTH_SUCCESS:
       return {
         ...state,
         users: action.payload,
       };
-    case actionTypes.GET_USER_FAIL:
+    case actionTypes.AUTH_FAIL:
       return {
         ...state,
         error: "",

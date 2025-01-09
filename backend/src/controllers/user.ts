@@ -4,10 +4,10 @@ import { decryptPassword, encryptPassword } from "../utils/encryptionUtils";
 
 export const register = async (req: any, res: any) => {
   try {
-    const { username, password, role } = req.body;
+    const { email, username, password, role } = req.body;
 
     // Check if the email already exists
-    const existingUser = await User.findOne({ username });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
         status: 400,
@@ -19,6 +19,7 @@ export const register = async (req: any, res: any) => {
     // Encrypt the password
     const encryptedPassword = encryptPassword(password);
     const newUser: any = new User({
+      email,
       username,
       password: encryptedPassword,
       role,
@@ -27,6 +28,7 @@ export const register = async (req: any, res: any) => {
     const token = await getJWTToken({
       id: newUser._id,
       username: newUser.username,
+      email: newUser.email,
       role: newUser.role,
     });
     res.status(201).json({
@@ -42,8 +44,8 @@ export const register = async (req: any, res: any) => {
 
 export const login = async (req: any, res: any) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
     if (!user) {
       return res
         .status(401)
@@ -60,7 +62,8 @@ export const login = async (req: any, res: any) => {
     // Generate JWT token
     const token = await getJWTToken({
       id: user._id,
-      email: user.username,
+      username: user.username,
+      email: user.email,
       role: user.role,
     });
 
