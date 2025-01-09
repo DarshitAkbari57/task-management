@@ -116,7 +116,6 @@ export const me: any = (payload: any, dispatch: any) => {
 
     try {
       const response: any = await apiGet("me", token);
-      console.log("response", response);
       if (response.status === 200) {
         dispatch({
           type: actionTypes.AUTH_SUCCESS,

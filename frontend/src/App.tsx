@@ -30,7 +30,6 @@ function App() {
           localStorage.clear();
           setIsLoggedIn(false);
         }
-        console.log("res", res);
       }
     };
     fetchUser();

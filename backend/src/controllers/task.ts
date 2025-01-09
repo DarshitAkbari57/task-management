@@ -15,8 +15,10 @@ export const createTask = async (req: any, res: Response, io: any) => {
 
     await newTask.save();
 
+    const taskList = await Task.find({ assignedTo: req.user._id });
+
     // Emit a socket event to notify clients of the new task
-    io.emit("taskUpdated", { message: "add new Task", data: newTask });
+    io.emit("taskUpdated", { message: "add new Task", data: taskList });
 
     res.status(201).json({
       status: 201,

@@ -66,7 +66,6 @@ const TaskPage: React.FC = () => {
   };
 
   const handleAddOrEditTask = async (values: any) => {
-    console.log("values :>> ", values);
     setLoading(true);
     try {
       const payload: any = {};
@@ -80,21 +79,20 @@ const TaskPage: React.FC = () => {
 
       if (editTask) {
         const res: any = await dispatch(UpdateTask(payload, editTask?._id));
-        console.log("res :>> ", res);
         if (res.status === 200) {
-          dispatch(GetAllTask());
+          dispatch(GetAllTask({ status: "" }));
         }
       } else {
         // Create new task
         const res: any = await dispatch(createTask(payload));
         if (res?.status === 201) {
-          dispatch(GetAllTask());
+          dispatch(GetAllTask({ status: "" }));
         }
       }
-      hideModal();
     } catch (err) {
       console.error("Error adding/editing task:", err);
     } finally {
+      hideModal();
       setLoading(false);
     }
   };
@@ -110,7 +108,7 @@ const TaskPage: React.FC = () => {
         try {
           const res = await dispatch(DeleteTask(id));
           if (res?.status === 200) {
-            dispatch(GetAllTask());
+            dispatch(GetAllTask({ status: "" }));
           }
         } catch (err) {
           console.error("Error deleting task:", err);
@@ -135,7 +133,7 @@ const TaskPage: React.FC = () => {
       // Optional: Dispatch an action to update status in the backend
       let res = await dispatch(UpdateTaskStatus({ status: newStatus }, taskId));
       if (res?.status === 200) {
-        dispatch(GetAllTask());
+        dispatch(GetAllTask({ status: "" }));
       }
     } catch (err) {
       console.error("Error updating status:", err);
@@ -243,7 +241,7 @@ const TaskPage: React.FC = () => {
         </Select>
         <Button type="primary" onClick={showAddModal}>
           Add Task
-          {TaskList()}
+          {/* {TaskList()} */}
         </Button>
       </div>
       <Table columns={columns} dataSource={tasks} rowKey="_id" />
