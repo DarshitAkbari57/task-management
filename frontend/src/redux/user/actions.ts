@@ -12,7 +12,7 @@ export const GetAllUsers: any = (): Promise<any> => {
 
     try {
       // Perform the GET request
-      const response = await apiGet<User>(`all`, token);
+      const response = await apiGet<any>(`all`, token);
 
       if (response.status === 200) {
         // Dispatch success action with user data
@@ -29,7 +29,7 @@ export const GetAllUsers: any = (): Promise<any> => {
         });
         return response.data; // Return error message
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log("error", error);
 
       // Handle unauthorized error (status 401)
@@ -45,7 +45,7 @@ export const GetAllUsers: any = (): Promise<any> => {
   };
 };
 
-export const login = (payload: any, dispatch: any) => {
+export const login: any = (payload: any, dispatch: any) => {
   return async (dispatch: any) => {
     dispatch({
       type: actionTypes.LOGIN_INIT,
@@ -76,7 +76,7 @@ export const login = (payload: any, dispatch: any) => {
   };
 };
 
-export const register = (payload: any, dispatch: any) => {
+export const register: any = (payload: any, dispatch: any) => {
   return async (dispatch: any) => {
     dispatch({
       type: actionTypes.LOGIN_INIT,

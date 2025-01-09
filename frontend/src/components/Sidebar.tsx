@@ -37,16 +37,18 @@ const Sidebar: React.FC<{ setIsLoggedIn: (loggedIn: boolean) => void }> = ({
               Task
             </Link>
           </li>
-          <li>
-            <Link
-              to="/users"
-              className={`block px-4 py-2 hover:bg-gray-700 ${
-                isActive("/users") ? "bg-gray-700" : ""
-              }`}
-            >
-              User
-            </Link>
-          </li>
+          {userData?.role === "Admin" && (
+            <li>
+              <Link
+                to="/users"
+                className={`block px-4 py-2 hover:bg-gray-700 ${
+                  isActive("/users") ? "bg-gray-700" : ""
+                }`}
+              >
+                User
+              </Link>
+            </li>
+          )}
           {/* Add more links as needed */}
         </ul>
       </nav>

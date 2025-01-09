@@ -51,7 +51,7 @@ export const createTask: any = (payload: any) => {
   };
 };
 
-export const GetAllTask: any = () => {
+export const GetAllTask: any = ({ status }: any) => {
   const token = localStorage.getItem("token");
   return async (dispatch: any) => {
     dispatch({
@@ -59,7 +59,10 @@ export const GetAllTask: any = () => {
     });
 
     try {
-      const response: any = await apiGet("tasks", token);
+      const response: any = await apiGet(
+        `tasks?status=${status ? status : ""}`,
+        token
+      );
       if (response.status === 200) {
         dispatch({
           type: actionTypes.GET_ALL_TASK_SUCCESS,

@@ -16,7 +16,6 @@ import {
   createTask,
   DeleteTask,
   GetAllTask,
-  GetMyTask,
   UpdateTask,
   UpdateTaskStatus,
 } from "../redux/task/action";
@@ -39,12 +38,12 @@ const TaskPage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("all");
 
   const [form] = Form.useForm(); // Form instance for Add/Edit Task
 
   const allUser = useSelector((state: any) => state?.User?.allUsers);
   const allTask = useSelector((state: any) => state?.Task?.allTask);
-  const userData = useSelector((state: any) => state.User.users?.data);
 
   const showAddModal = () => {
     setEditTask(null);
@@ -200,13 +199,21 @@ const TaskPage: React.FC = () => {
     },
   ];
 
+  const handleSelectChange = (value: any) => {
+    setSelectedOption(value); // Update the state with the selected value
+  };
+
   useEffect(() => {
     dispatch(GetAllUsers());
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(GetAllTask());
-  }, [dispatch]);
+    if (selectedOption === "all") {
+      dispatch(GetAllTask({ status: "" })); // No status, so do not pass any value
+    } else if (selectedOption === "my") {
+      dispatch(GetAllTask({ status: "my" })); // Pass 'my' as the status
+    }
+  }, [dispatch, selectedOption]);
 
   useEffect(() => {
     if (allTask?.data) {
@@ -224,7 +231,16 @@ const TaskPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <div className="flex items-center justify-end mb-7 mt-2">
+      <div className="flex items-center justify-between mb-7 mt-2">
+        <Select
+          className="w-28"
+          placeholder="Select..."
+          value={selectedOption} // Bind the state to the Select component
+          onChange={handleSelectChange}
+        >
+          <Select.Option value={"all"}>All</Select.Option>
+          <Select.Option value={"my"}>My</Select.Option>
+        </Select>
         <Button type="primary" onClick={showAddModal}>
           Add Task
           {TaskList()}
