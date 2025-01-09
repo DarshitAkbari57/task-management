@@ -3,6 +3,7 @@ import * as actionTypes from "../ActionTypes";
 const initialState = {
   exampleData: [],
   users: [],
+  allUsers: [],
 };
 
 const UserReducer = (state = initialState, action: any) => {
@@ -31,6 +32,20 @@ const UserReducer = (state = initialState, action: any) => {
         users: action.payload,
       };
     case actionTypes.AUTH_FAIL:
+      return {
+        ...state,
+        error: "",
+      };
+    case actionTypes.GET_ALL_USER_INIT:
+      return {
+        ...state,
+      };
+    case actionTypes.GET_ALL_USER_SUCCESS:
+      return {
+        ...state,
+        allUsers: action.payload,
+      };
+    case actionTypes.GET_ALL_USER_FAIL:
       return {
         ...state,
         error: "",

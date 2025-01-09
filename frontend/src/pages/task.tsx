@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Button,
@@ -12,7 +12,9 @@ import {
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { useDispatch } from "react-redux";
-import { createTask } from "../redux/task/action";
+import { createTask, GetAllTask, UpdateTask } from "../redux/task/action";
+import { GetAllUsers } from "../redux/user/actions";
+import { useSelector } from "react-redux";
 
 interface Task {
   _id: string;
@@ -22,12 +24,6 @@ interface Task {
   deadline: string;
 }
 
-const assignOption = [
-  { value: "677f6c97b0dd2e1131ef2719", label: "John Doe1" },
-  { value: "677f6c97b0dd2e1131ef2713", label: "John Doe2" },
-  { value: "677f6c97b0dd2e1131ef2712", label: "John Doe3" },
-];
-
 const TaskPage: React.FC = () => {
   const dispatch = useDispatch();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -36,6 +32,10 @@ const TaskPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm(); // Form instance for Add/Edit Task
+
+  const allUser = useSelector((state: any) => state?.User?.allUsers);
+  const allTask = useSelector((state: any) => state?.Task?.allTask);
+  console.log("allTask :>> ", allTask);
 
   const showAddModal = () => {
     setEditTask(null);
@@ -61,29 +61,27 @@ const TaskPage: React.FC = () => {
     console.log("values :>> ", values);
     setLoading(true);
     try {
-      const payload = {
-        title: values.title,
-        description: values.description,
-        assignedTo: values.assignedTo,
-        deadline: values.deadline,
-      };
+      const payload: any = {};
+      if (values.title !== editTask?.title) payload.title = values.title;
+      if (values.description !== editTask?.description)
+        payload.description = values.description;
+      if (values.assignedTo !== editTask?.assignedTo)
+        payload.assignedTo = values.assignedTo;
+      if (values.deadline !== editTask?.deadline)
+        payload.deadline = values.deadline;
 
       if (editTask) {
-        // Update the task
-        const updatedTask = { ...editTask, ...payload };
-        const updatedTasks = tasks.map((task) =>
-          task._id === editTask._id ? updatedTask : task
-        );
-        setTasks(updatedTasks);
+        const res: any = await dispatch(UpdateTask(payload, editTask?._id));
+        console.log("res :>> ", res);
+        if (res.status === 200) {
+          dispatch(GetAllTask());
+        }
       } else {
         // Create new task
         const res: any = await dispatch(createTask(payload));
-        console.log("res :>> ", res);
         if (res?.status === 201) {
-          console.log("res :>> ", res);
+          dispatch(GetAllTask());
         }
-        const newTask = { ...payload, _id: res.data._id }; // Assuming API returns _id
-        setTasks([...tasks, newTask]);
       }
       hideModal();
     } catch (err) {
@@ -93,9 +91,26 @@ const TaskPage: React.FC = () => {
     }
   };
 
-  const handleDeleteTask = (_id: string) => {
-    const updatedTasks = tasks.filter((task) => task._id !== _id);
-    setTasks(updatedTasks);
+  const handleDeleteTask = (id: string) => {
+    console.log("id :>> ", id);
+    DeleteTask;
+    // const updatedTasks = tasks.filter((task) => task._id !== _id);
+    // setTasks(updatedTasks);
+  };
+
+  const handleStatusChange = async (taskId: string, newStatus: string) => {
+    try {
+      // Update the status locally
+      const updatedTasks = tasks.map((task) =>
+        task._id === taskId ? { ...task, status: newStatus } : task
+      );
+      setTasks(updatedTasks);
+
+      // Optional: Dispatch an action to update status in the backend
+      // await dispatch(updateTaskStatus(taskId, newStatus));
+    } catch (err) {
+      console.error("Error updating status:", err);
+    }
   };
 
   const columns = [
@@ -123,9 +138,13 @@ const TaskPage: React.FC = () => {
       title: "Status",
       key: "status",
       render: (_: any, record: any) => (
-        <Select placeholder="Select status">
+        <Select
+          placeholder="Select status"
+          value={record.status} // Set the current status value
+          onChange={(value) => handleStatusChange(record._id, value)} // Handle status change
+        >
           <Select.Option value="Pending">Pending</Select.Option>
-          <Select.Option value="In Progress">In Progress</Select.Option>
+          <Select.Option value="InProgress">In Progress</Select.Option>
           <Select.Option value="Completed">Completed</Select.Option>
         </Select>
       ),
@@ -150,6 +169,28 @@ const TaskPage: React.FC = () => {
       ),
     },
   ];
+
+  useEffect(() => {
+    dispatch(GetAllUsers());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(GetAllTask());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (allTask?.data) {
+      const transformedTasks = allTask.data.map((task: any) => ({
+        _id: task._id,
+        title: task.title,
+        description: task.description,
+        assignedTo: task.assignedTo?.username || "Unassigned",
+        deadline: moment(task.deadline).format("YYYY-MM-DD"),
+        status: task.status,
+      }));
+      setTasks(transformedTasks);
+    }
+  }, [allTask]);
 
   return (
     <div className="p-4">
@@ -201,9 +242,9 @@ const TaskPage: React.FC = () => {
             rules={[{ required: true, message: "Please select the assignee!" }]}
           >
             <Select placeholder="Select assignee">
-              {assignOption.map((option) => (
-                <Select.Option key={option.value} value={option.value}>
-                  {option.label}
+              {allUser?.data?.map((user: any) => (
+                <Select.Option key={user._id} value={user._id}>
+                  {user.username}
                 </Select.Option>
               ))}
             </Select>
