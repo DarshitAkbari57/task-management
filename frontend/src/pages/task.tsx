@@ -23,6 +23,7 @@ import {
 import { GetAllUsers } from "../redux/user/actions";
 import { useSelector } from "react-redux";
 import TaskList from "../components/socket";
+import dayjs from "dayjs";
 
 interface Task {
   _id: string;
@@ -250,7 +251,7 @@ const TaskPage: React.FC = () => {
             title: "",
             description: "",
             assignedTo: "",
-            deadline: moment(),
+            deadline: dayjs(),
           }}
         >
           <Form.Item
