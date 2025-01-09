@@ -1,11 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar: React.FC<{ setIsLoggedIn: (loggedIn: boolean) => void }> = ({
   setIsLoggedIn,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const userData = useSelector((state: any) => state.User.users?.data);
   const userName = userData?.username;
   const userEmail = userData?.email;
@@ -18,14 +19,32 @@ const Sidebar: React.FC<{ setIsLoggedIn: (loggedIn: boolean) => void }> = ({
     navigate("/");
   };
 
+  // Function to check if a link is active
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <div className="w-64 h-full bg-gray-800 text-white flex flex-col">
       <h2 className="p-4 text-lg font-bold">App Sidebar</h2>
       <nav className="flex-1">
         <ul className="space-y-2">
           <li>
-            <Link to="/task" className="block px-4 py-2 hover:bg-gray-700">
+            <Link
+              to="/task"
+              className={`block px-4 py-2 hover:bg-gray-700 ${
+                isActive("/task") ? "bg-gray-700" : ""
+              }`}
+            >
               Task
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/user"
+              className={`block px-4 py-2 hover:bg-gray-700 ${
+                isActive("/user") ? "bg-gray-700" : ""
+              }`}
+            >
+              User
             </Link>
           </li>
           {/* Add more links as needed */}

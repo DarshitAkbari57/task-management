@@ -12,14 +12,15 @@ import TaskPage from "./pages/task";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { me } from "./redux/user/actions";
+import User from "./pages/user";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dispatch = useDispatch();
 
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
       if (token) {
         const res = await dispatch(me());
         if (res?.status === 200) {
@@ -32,7 +33,7 @@ function App() {
       }
     };
     fetchUser();
-  }, [dispatch]);
+  }, [dispatch, token]);
 
   return (
     <>
@@ -64,6 +65,10 @@ function App() {
               <Route
                 path="/task"
                 element={isLoggedIn ? <TaskPage /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/users"
+                element={isLoggedIn ? <User /> : <Navigate to="/" />}
               />
             </Routes>
           </div>
