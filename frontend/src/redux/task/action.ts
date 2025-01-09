@@ -88,6 +88,43 @@ export const GetAllTask: any = () => {
   };
 };
 
+export const GetMyTask: any = () => {
+  const token = localStorage.getItem("token");
+  return async (dispatch: any) => {
+    dispatch({
+      type: actionTypes.GET_ALL_TASK_INIT,
+    });
+
+    try {
+      const response: any = await apiGet("tasks/my", token);
+      if (response.status === 200) {
+        dispatch({
+          type: actionTypes.GET_ALL_TASK_SUCCESS,
+          payload: response.data,
+        });
+        return response.data;
+      } else {
+        dispatch({
+          type: actionTypes.GET_ALL_TASK_FAIL,
+          payload: response?.data?.message,
+        });
+        return response.data;
+      }
+    } catch (error: any) {
+      console.log("error", error);
+      if (error?.status === 401) {
+        dispatch({
+          type: actionTypes.GET_ALL_TASK_FAIL,
+          payload: error?.data?.message,
+        });
+        localStorage.clear();
+        generatePopup("error", error?.data?.message);
+      }
+      return error;
+    }
+  };
+};
+
 export const UpdateTask: any = (payload: any, id: any) => {
   const token = localStorage.getItem("token");
   return async (dispatch: any) => {

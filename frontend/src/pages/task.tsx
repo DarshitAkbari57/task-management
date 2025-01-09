@@ -16,6 +16,7 @@ import {
   createTask,
   DeleteTask,
   GetAllTask,
+  GetMyTask,
   UpdateTask,
   UpdateTaskStatus,
 } from "../redux/task/action";
@@ -42,7 +43,7 @@ const TaskPage: React.FC = () => {
 
   const allUser = useSelector((state: any) => state?.User?.allUsers);
   const allTask = useSelector((state: any) => state?.Task?.allTask);
-  console.log("allTask :>> ", allTask);
+  const userData = useSelector((state: any) => state.User.users?.data);
 
   const showAddModal = () => {
     setEditTask(null);
@@ -203,7 +204,11 @@ const TaskPage: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(GetAllTask());
+    if (userData?.role === "user") {
+      dispatch(GetMyTask());
+    } else {
+      dispatch(GetAllTask());
+    }
   }, [dispatch]);
 
   useEffect(() => {
