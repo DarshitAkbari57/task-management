@@ -6,12 +6,10 @@ const socket = io("http://localhost:8080");
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
-  console.log("tasks", tasks);
 
   useEffect(() => {
     // Listen for the 'taskUpdated' event from the server
     socket.on("taskUpdated", (updatedTask) => {
-      console.log("updatedTask", updatedTask);
       setTasks((prevTasks) => {
         // Update task list with the new or updated task
         const taskIndex = prevTasks.findIndex(

@@ -16,7 +16,7 @@ export const createTask = async (req: any, res: Response, io: any) => {
     await newTask.save();
 
     // Emit a socket event to notify clients of the new task
-    io.emit("taskUpdated", newTask);
+    io.emit("taskUpdated", { message: "add new Task", data: newTask });
 
     res.status(201).json({
       status: 201,
@@ -51,7 +51,7 @@ export const updateTask = async (req: any, res: any, io: any) => {
     }
 
     // Emit the updated task data
-    io.emit("taskUpdated", updatedTask);
+    io.emit("taskUpdated", { message: "update Task", data: updatedTask });
 
     res.status(200).json({
       status: 200,
@@ -152,7 +152,7 @@ export const deleteTask = async (req: any, res: any, io: any) => {
     }
 
     // Emit the deleted task data
-    io.emit("taskDeleted", deletedTask);
+    io.emit("taskDeleted", { message: "Delete Task", data: deletedTask });
 
     res.status(200).json({
       status: 200,
@@ -195,7 +195,10 @@ export const updateTaskStatus = async (req: any, res: any, io: any) => {
       });
     }
     // Emit a socket event to notify clients of the new task
-    io.emit("taskUpdated", updatedTask);
+    io.emit("taskUpdated", {
+      message: "Task Status Update",
+      data: updatedTask,
+    });
 
     res.status(200).json({
       status: 200,
