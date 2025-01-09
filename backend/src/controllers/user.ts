@@ -102,3 +102,32 @@ export const me = async (req: any, res: any) => {
     });
   }
 };
+
+export const getAll = async (req: any, res: any) => {
+  const userId = req.user._id;
+
+  try {
+    const user = await User.find();
+
+    // If no user found
+    if (!user) {
+      return res.status(400).json({
+        status: 400,
+        message: "User not found.",
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: "information retrieved successfully.",
+      data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: "Error retrieving user data",
+      data: error,
+    });
+  }
+};
