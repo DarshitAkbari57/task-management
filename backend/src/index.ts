@@ -15,12 +15,12 @@ dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-const server = http.createServer(app);
-const io = new Server(server);
-
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+const server = http.createServer(app);
+const io = new Server(server);
 
 // Socket.io connection
 io.on("connection", (socket) => {

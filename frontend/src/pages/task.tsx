@@ -12,9 +12,16 @@ import {
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { useDispatch } from "react-redux";
-import { createTask, GetAllTask, UpdateTask } from "../redux/task/action";
+import {
+  createTask,
+  DeleteTask,
+  GetAllTask,
+  UpdateTask,
+  UpdateTaskStatus,
+} from "../redux/task/action";
 import { GetAllUsers } from "../redux/user/actions";
 import { useSelector } from "react-redux";
+import TaskList from "../components/socket";
 
 interface Task {
   _id: string;
@@ -92,13 +99,31 @@ const TaskPage: React.FC = () => {
   };
 
   const handleDeleteTask = (id: string) => {
-    console.log("id :>> ", id);
-    DeleteTask;
-    // const updatedTasks = tasks.filter((task) => task._id !== _id);
-    // setTasks(updatedTasks);
+    Modal.confirm({
+      title: "Are you sure you want to delete this task?",
+      content: "This action cannot be undone.",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          const res = await dispatch(DeleteTask(id));
+          if (res?.status === 200) {
+            dispatch(GetAllTask());
+          }
+        } catch (err) {
+          console.error("Error deleting task:", err);
+        }
+      },
+      onCancel: () => {
+        console.log("Delete cancelled");
+      },
+    });
   };
 
   const handleStatusChange = async (taskId: string, newStatus: string) => {
+    console.log("taskId", taskId);
+    console.log("newStatus", newStatus);
     try {
       // Update the status locally
       const updatedTasks = tasks.map((task) =>
@@ -107,7 +132,10 @@ const TaskPage: React.FC = () => {
       setTasks(updatedTasks);
 
       // Optional: Dispatch an action to update status in the backend
-      // await dispatch(updateTaskStatus(taskId, newStatus));
+      let res = await dispatch(UpdateTaskStatus({ status: newStatus }, taskId));
+      if (res?.status === 200) {
+        dispatch(GetAllTask());
+      }
     } catch (err) {
       console.error("Error updating status:", err);
     }
@@ -144,7 +172,7 @@ const TaskPage: React.FC = () => {
           onChange={(value) => handleStatusChange(record._id, value)} // Handle status change
         >
           <Select.Option value="Pending">Pending</Select.Option>
-          <Select.Option value="InProgress">In Progress</Select.Option>
+          <Select.Option value="In Progress">In Progress</Select.Option>
           <Select.Option value="Completed">Completed</Select.Option>
         </Select>
       ),
@@ -198,6 +226,7 @@ const TaskPage: React.FC = () => {
         <h1 className="text-2xl font-bold">Task Page</h1>
         <Button type="primary" onClick={showAddModal}>
           Add Task
+          {TaskList()}
         </Button>
       </div>
       <Table columns={columns} dataSource={tasks} rowKey="_id" />

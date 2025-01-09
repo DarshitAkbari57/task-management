@@ -131,6 +131,50 @@ export const UpdateTask: any = (payload: any, id: any) => {
   };
 };
 
+export const UpdateTaskStatus: any = (payload: any, id: any) => {
+  console.log("payload", payload);
+  const token = localStorage.getItem("token");
+  return async (dispatch: any) => {
+    dispatch({
+      type: actionTypes.UPDATE_TASK_STATUS_INIT,
+    });
+
+    try {
+      const response: any = await apiPut(`tasks/${id}/status`, payload, token);
+      if (response.status === 200) {
+        dispatch({
+          type: actionTypes.UPDATE_TASK_STATUS_SUCCESS,
+          payload: response.data,
+        });
+        return response.data;
+      } else {
+        dispatch({
+          type: actionTypes.UPDATE_TASK_STATUS_FAIL,
+          payload: response?.data?.message,
+        });
+        return response.data;
+      }
+    } catch (error: any) {
+      console.log("error", error);
+      if (error?.status === 404) {
+        dispatch({
+          type: actionTypes.UPDATE_TASK_STATUS_FAIL,
+          payload: error?.data?.message,
+        });
+        generatePopup("error", error?.data?.message);
+      } else if (error?.status === 401) {
+        dispatch({
+          type: actionTypes.UPDATE_TASK_STATUS_FAIL,
+          payload: error?.data?.message,
+        });
+        localStorage.clear();
+        generatePopup("error", error?.data?.message);
+      }
+      return error;
+    }
+  };
+};
+
 export const DeleteTask: any = (id: any) => {
   const token = localStorage.getItem("token");
   return async (dispatch: any) => {
