@@ -107,7 +107,7 @@ export const register = (payload: any, dispatch: any) => {
   };
 };
 
-export const me = (payload: any, dispatch: any) => {
+export const me: any = (payload: any, dispatch: any) => {
   const token = localStorage.getItem("token");
   return async (dispatch: any) => {
     dispatch({

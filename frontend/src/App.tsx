@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { me } from "./redux/user/actions";
 import User from "./pages/user";
+import Header from "./components/header";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,6 +49,7 @@ function App() {
               isLoggedIn ? "w-[calc(100%-250px)]" : "w-full"
             }`}
           >
+            {isLoggedIn && <Header />}
             <Routes>
               {/* Login/Register Route */}
               <Route

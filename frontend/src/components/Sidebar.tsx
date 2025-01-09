@@ -39,9 +39,9 @@ const Sidebar: React.FC<{ setIsLoggedIn: (loggedIn: boolean) => void }> = ({
           </li>
           <li>
             <Link
-              to="/user"
+              to="/users"
               className={`block px-4 py-2 hover:bg-gray-700 ${
-                isActive("/user") ? "bg-gray-700" : ""
+                isActive("/users") ? "bg-gray-700" : ""
               }`}
             >
               User

@@ -222,8 +222,7 @@ const TaskPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <div className="flex items-center justify-between mb-10">
-        <h1 className="text-2xl font-bold">Task Page</h1>
+      <div className="flex items-center justify-end mb-7 mt-2">
         <Button type="primary" onClick={showAddModal}>
           Add Task
           {TaskList()}
