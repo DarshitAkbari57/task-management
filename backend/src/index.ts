@@ -20,7 +20,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // Adjust this to the correct URL of your frontend
+    methods: ["GET", "POST"],
+  },
+});
 
 // Socket.io connection
 io.on("connection", (socket) => {

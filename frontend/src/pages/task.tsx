@@ -225,7 +225,6 @@ const TaskPage: React.FC = () => {
       <div className="flex items-center justify-end mb-7 mt-2">
         <Button type="primary" onClick={showAddModal}>
           Add Task
-          {TaskList()}
         </Button>
       </div>
       <Table columns={columns} dataSource={tasks} rowKey="_id" />

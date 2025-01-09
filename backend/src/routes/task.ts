@@ -19,7 +19,9 @@ const taskRoutes = (io: any) => {
   router.get("/tasks/my", getMyTasks);
   router.get("/tasks/:taskId", getTaskById);
   router.delete("/tasks/:taskId", (req, res) => deleteTask(req, res, io));
-  router.put("/tasks/:taskId/status", updateTaskStatus);
+  router.put("/tasks/:taskId/status", (req, res) =>
+    updateTaskStatus(req, res, io)
+  );
 
   return router;
 };

@@ -168,7 +168,7 @@ export const deleteTask = async (req: any, res: any, io: any) => {
   }
 };
 
-export const updateTaskStatus = async (req: any, res: any) => {
+export const updateTaskStatus = async (req: any, res: any, io: any) => {
   try {
     const { taskId } = req.params;
     const { status } = req.body;
@@ -194,6 +194,8 @@ export const updateTaskStatus = async (req: any, res: any) => {
         data: null,
       });
     }
+    // Emit a socket event to notify clients of the new task
+    io.emit("taskUpdated", updatedTask);
 
     res.status(200).json({
       status: 200,
