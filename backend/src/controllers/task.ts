@@ -67,9 +67,24 @@ export const updateTask = async (req: any, res: any, io: any) => {
   }
 };
 
-export const getTasks = async (req: Request, res: Response) => {
+export const getTasks = async (req: any, res: Response) => {
   try {
-    const tasks = await Task.find()
+    const userId = req.user._id;
+    const { status } = req.query;
+
+    // Build the filter object
+    let filter: any = {};
+
+    // If status is passed, add it to the filter
+    if (status) {
+      filter.status = status;
+    }
+
+    // Add filter for tasks assigned to the current user
+    filter.assignedTo = userId;
+
+    // Fetch tasks based on filter
+    const tasks = await Task.find(filter)
       .populate("assignedTo", "username role")
       .populate("createdBy", "username role");
 

@@ -205,11 +205,7 @@ const TaskPage: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (userData?.role === "user") {
-      dispatch(GetMyTask());
-    } else {
-      dispatch(GetAllTask());
-    }
+    dispatch(GetAllTask());
   }, [dispatch]);
 
   useEffect(() => {
