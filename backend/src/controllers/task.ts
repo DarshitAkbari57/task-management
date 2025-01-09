@@ -76,12 +76,9 @@ export const getTasks = async (req: any, res: Response) => {
     let filter: any = {};
 
     // If status is passed, add it to the filter
-    if (status) {
-      filter.status = status;
+    if (status == "my") {
+      filter.assignedTo = userId;
     }
-
-    // Add filter for tasks assigned to the current user
-    filter.assignedTo = userId;
 
     // Fetch tasks based on filter
     const tasks = await Task.find(filter)
