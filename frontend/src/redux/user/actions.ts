@@ -1,7 +1,7 @@
 import * as actionTypes from "../ActionTypes";
 import { apiGet, apiPost } from "../axios";
 
-export const GetAllUsers: any = (): Promise<any> => {
+export const GetAllUsers: any = () => {
   const token = localStorage.getItem("token");
 
   return async (dispatch: any) => {

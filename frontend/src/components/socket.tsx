@@ -10,15 +10,15 @@ const socket = io("http://localhost:8080");
 dayjs.extend(relativeTime);
 
 const TaskList = () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<any>([]);
 
   useEffect(() => {
     // Listen for the 'taskUpdated' event from the server
     socket.on("taskUpdated", (updatedTask) => {
-      setTasks((prevTasks) => {
+      setTasks((prevTasks: any) => {
         // Update task list with the new or updated task
         const taskIndex = prevTasks.findIndex(
-          (task) => task._id === updatedTask._id
+          (task: any) => task._id === updatedTask._id
         );
         if (taskIndex !== -1) {
           const updatedTasks = [...prevTasks];
@@ -31,8 +31,8 @@ const TaskList = () => {
 
     // Listen for the 'taskDeleted' event
     socket.on("taskDeleted", (deletedTask) => {
-      setTasks((prevTasks) =>
-        prevTasks.filter((task) => task._id !== deletedTask._id)
+      setTasks((prevTasks: any) =>
+        prevTasks.filter((task: any) => task._id !== deletedTask._id)
       );
     });
 
@@ -46,8 +46,7 @@ const TaskList = () => {
   return tasks?.length > 0 ? (
     <>
       <div className="flex flex-col gap-1">
-        {tasks?.[0]?.data?.map((item) => {
-          console.log("item :>> ", item);
+        {tasks?.[0]?.data?.map((item: any) => {
           return (
             <div className="flex items-center gap-x-1 rounded-md px-1 py-2 hover:bg-gray-100 duration-300">
               <IoNotificationsCircle className="text-3xl text-primary flex-shrink-0" />
