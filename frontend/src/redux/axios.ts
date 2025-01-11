@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 
-const API_URL: string = process.env.VITE_SERVERURL || "";
+const API_URL: string = "http://localhost:8080/api/";
 type Token = string | null;
 
 const setAuthToken = (token: Token): void => {
