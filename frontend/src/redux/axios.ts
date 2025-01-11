@@ -1,7 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 
-const API_URL: string = import.meta.env.VITE_SERVERURL || "";
-console.log("API_URL :>> ", API_URL);
+const API_URL: string = process.env.VITE_SERVERURL || "";
 type Token = string | null;
 
 const setAuthToken = (token: Token): void => {

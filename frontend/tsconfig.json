@@ -5,6 +5,14 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "types": ["node"]
-  }
+   "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "types": ["jest", "node"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src", "**/*.ts", "**/*.tsx", "jest.config.ts"],
+  "exclude": ["node_modules"]
 }
