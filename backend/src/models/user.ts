@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ["Admin", "User"], default: "User" },
     permissions: {
       type: [String],
-      enum: ["view", "edit", "delete"],
+      enum: ["add", "edit", "delete"],
       default: ["view"],
     },
   },

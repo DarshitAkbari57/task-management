@@ -235,11 +235,7 @@ const TaskPage: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (selectedOption === "all") {
-      dispatch(GetAllTask({ status: "" })); // No status, so do not pass any value
-    } else if (selectedOption === "my") {
-      dispatch(GetAllTask({ status: "my" })); // Pass 'my' as the status
-    }
+    dispatch(GetAllTask(selectedOption)); // No status, so do not pass any value
   }, [dispatch, selectedOption]);
 
   useEffect(() => {
@@ -269,7 +265,9 @@ const TaskPage: React.FC = () => {
           onChange={handleSelectChange}
         >
           <Select.Option value={"all"}>All</Select.Option>
-          <Select.Option value={"my"}>My</Select.Option>
+          {allUser?.data?.map((e: any) => (
+            <Select.Option value={e?._id}>{e?.username}</Select.Option>
+          ))}
         </Select>
         <Button type="primary" onClick={showAddModal}>
           Add Task

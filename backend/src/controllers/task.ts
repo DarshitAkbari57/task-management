@@ -78,7 +78,7 @@ export const getTasks = async (req: any, res: Response) => {
     let filter: any = {};
 
     // If status is passed, add it to the filter
-    if (id) {
+    if (id && id !== "all") {
       filter.assignedTo = id;
     }
 
