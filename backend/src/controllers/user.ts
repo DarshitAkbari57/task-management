@@ -110,7 +110,7 @@ export const getAll = async (req: any, res: any) => {
   const userId = req.user._id;
 
   try {
-    const user = await User.find();
+    const user = await User.find({ role: "User" });
 
     // If no user found
     if (!user) {
@@ -130,6 +130,51 @@ export const getAll = async (req: any, res: any) => {
     return res.status(500).json({
       status: 500,
       message: "Error retrieving user data",
+      data: error,
+    });
+  }
+};
+
+export const updateUser = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    const { username, email, role, permissions } = req.body;
+
+    // Validate permissions if provided
+    if (permissions && !Array.isArray(permissions)) {
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid permissions format. It should be an array.",
+        data: null,
+      });
+    }
+
+    // Find and update the user
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { username, email, role, permissions },
+      { new: true, runValidators: true }
+    );
+
+    // If the user is not found
+    if (!updatedUser) {
+      return res.status(404).json({
+        status: 404,
+        message: "User not found.",
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: "User updated successfully.",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error updating user.",
       data: error,
     });
   }

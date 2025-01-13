@@ -6,6 +6,11 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: false },
     password: { type: String, required: false },
     role: { type: String, enum: ["Admin", "User"], default: "User" },
+    permissions: {
+      type: [String],
+      enum: ["view", "edit", "delete"],
+      default: ["view"],
+    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "modified_at" },
