@@ -35,7 +35,7 @@ const TaskPage: React.FC = () => {
   const dispatch = useDispatch();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editTask, setEditTask] = useState<Task | null>(null);
+  const [editTask, setEditTask] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState("all");
 
@@ -96,17 +96,18 @@ const TaskPage: React.FC = () => {
         payload.assignedTo = values.assignedTo;
       if (values.deadline !== editTask?.deadline)
         payload.deadline = values.deadline;
+      if (values.status !== editTask?.status) payload.status = values.status;
 
       if (editTask) {
         const res: any = await dispatch(UpdateTask(payload, editTask?._id));
         if (res.status === 200) {
-          dispatch(GetAllTask({ status: "" }));
+          dispatch(GetAllTask(selectedOption));
         }
       } else {
         // Create new task
         const res: any = await dispatch(createTask(payload));
         if (res?.status === 201) {
-          dispatch(GetAllTask({ status: "" }));
+          dispatch(GetAllTask(selectedOption));
         }
       }
     } catch (err) {
@@ -128,7 +129,7 @@ const TaskPage: React.FC = () => {
         try {
           const res = await dispatch(DeleteTask(id));
           if (res?.status === 200) {
-            dispatch(GetAllTask({ status: "" }));
+            dispatch(GetAllTask(selectedOption));
           }
         } catch (err) {
           console.error("Error deleting task:", err);
@@ -151,7 +152,7 @@ const TaskPage: React.FC = () => {
       // Optional: Dispatch an action to update status in the backend
       let res = await dispatch(UpdateTaskStatus({ status: newStatus }, taskId));
       if (res?.status === 200) {
-        dispatch(GetAllTask({ status: "" }));
+        dispatch(GetAllTask(selectedOption));
       }
     } catch (err) {
       console.error("Error updating status:", err);
@@ -183,27 +184,19 @@ const TaskPage: React.FC = () => {
       title: "Status",
       key: "status",
       render: (_: any, record: any) => (
-        <Select
-          className="w-32"
-          placeholder="Select status"
-          value={record.status}
-          onChange={(value) => handleStatusChange(record._id, value)}
-          style={{
-            borderColor: getStatusBorderColor(record.status),
-            border: "1px solid",
-            borderRadius: "6px",
-          }}
-          dropdownStyle={{
-            borderRadius: "6px",
-            borderColor: getStatusBorderColor(record.status),
-          }}
-          onFocus={(e) => (e.target.style.outline = "none")} // Remove default blue outline
-          onBlur={(e) => (e.target.style.outline = "none")}
+        <p
+          className={`flex items-center justify-center border rounded-lg px-2 w-28 ${
+            record?.status === "Pending"
+              ? "border-blue-400 text-blue-400"
+              : record?.status === "In Progress"
+              ? "border-yellow-400 text-yellow-400"
+              : record?.status === "Completed"
+              ? "border-green-400 text-green-400"
+              : "border-gray-400 text-gray-400"
+          }`}
         >
-          <Select.Option value="Pending">Pending</Select.Option>
-          <Select.Option value="In Progress">In Progress</Select.Option>
-          <Select.Option value="Completed">Completed</Select.Option>
-        </Select>
+          {record?.status}
+        </p>
       ),
     },
     {
@@ -269,7 +262,7 @@ const TaskPage: React.FC = () => {
         title: task.title,
         description: task.description,
         assignedTo: task.assignedTo?.username || "Unassigned",
-        deadline: moment(task?.deadline).format("DD-MM-YYYY"),
+        deadline: moment(task?.deadline).format("YYYY-MM-DD"),
         status: task.status,
         createdby: task?.createdBy?.username,
         createdat: moment(task?.created_at).format("DD-MM-YYYY HH:mm A"),
@@ -318,6 +311,7 @@ const TaskPage: React.FC = () => {
             description: "",
             assignedTo: "",
             deadline: dayjs(),
+            status: editTask ? editTask?.status : "Pending",
           }}
         >
           <Form.Item
@@ -347,6 +341,17 @@ const TaskPage: React.FC = () => {
                   {user.username}
                 </Select.Option>
               ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[{ required: true, message: "Please select the status!" }]}
+          >
+            <Select>
+              <Select.Option value="Pending">Pending</Select.Option>
+              <Select.Option value="In Progress">In Progress</Select.Option>
+              <Select.Option value="Completed">Completed</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item
