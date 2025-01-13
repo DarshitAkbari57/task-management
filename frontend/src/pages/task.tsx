@@ -41,6 +41,13 @@ const TaskPage: React.FC = () => {
 
   const [form] = Form.useForm(); // Form instance for Add/Edit Task
 
+  const user = useSelector((state: any) => state?.User?.users?.data);
+  const userPermissions = user?.permissions || [];
+  // Check if the user has permission to view Action column (edit or delete)
+  const hasEditPermission = userPermissions.includes("edit");
+  const hasDeletePermission = userPermissions.includes("delete");
+  const showActionColumn = hasEditPermission || hasDeletePermission;
+
   const allUser = useSelector((state: any) => state?.User?.allUsers);
   const allTask = useSelector((state: any) => state?.Task?.allTask);
 
@@ -176,24 +183,47 @@ const TaskPage: React.FC = () => {
       ),
     },
     {
-      title: "Action",
-      key: "action",
-      render: (_: any, record: Task) => (
-        <Space size="middle">
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => showEditModal(record)}
-            size="small"
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={() => handleDeleteTask(record._id)}
-            size="small"
-            danger
-          />
-        </Space>
-      ),
+      title: "Created By",
+      dataIndex: "createdby",
+      key: "createdby",
     },
+    {
+      title: "Created At",
+      dataIndex: "createdat",
+      key: "createdat",
+    },
+    {
+      title: "Updated At",
+      dataIndex: "updatedat",
+      key: "updatedat",
+    },
+    ...(showActionColumn
+      ? [
+          {
+            title: "Action",
+            key: "action",
+            render: (_: any, record: Task) => (
+              <Space size="middle">
+                {userPermissions.includes("edit") && (
+                  <Button
+                    icon={<EditOutlined />}
+                    onClick={() => showEditModal(record)}
+                    size="small"
+                  />
+                )}
+                {userPermissions.includes("delete") && (
+                  <Button
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDeleteTask(record._id)}
+                    size="small"
+                    danger
+                  />
+                )}
+              </Space>
+            ),
+          },
+        ]
+      : []),
   ];
 
   const handleSelectChange = (value: any) => {
@@ -219,8 +249,11 @@ const TaskPage: React.FC = () => {
         title: task.title,
         description: task.description,
         assignedTo: task.assignedTo?.username || "Unassigned",
-        deadline: moment(task.deadline).format("YYYY-MM-DD"),
+        deadline: moment(task?.deadline).format("DD-MM-YYYY"),
         status: task.status,
+        createdby: task?.createdBy?.username,
+        createdat: moment(task?.created_at).format("DD-MM-YYYY HH:mm A"),
+        updatedat: moment(task?.modified_at).format("DD-MM-YYYY HH:mm A"),
       }));
       setTasks(transformedTasks);
     }

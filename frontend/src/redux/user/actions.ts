@@ -1,5 +1,5 @@
 import * as actionTypes from "../ActionTypes";
-import { apiGet, apiPost } from "../axios";
+import { apiGet, apiPost, apiPut } from "../axios";
 
 export const GetAllUsers: any = () => {
   const token = localStorage.getItem("token");
@@ -132,6 +132,42 @@ export const me: any = (payload: any, dispatch: any) => {
     } catch (error: any) {
       dispatch({
         type: actionTypes.AUTH_FAIL,
+        payload: error?.data?.message,
+      });
+      return error;
+    }
+  };
+};
+
+export const updatePermission: any = (
+  id: string,
+  payload: any,
+  dispatch: any
+) => {
+  const token = localStorage.getItem("token");
+  return async (dispatch: any) => {
+    dispatch({
+      type: actionTypes.PERMISSION_UPDATE_INIT,
+    });
+
+    try {
+      const response: any = await apiPut(`users/${id}`, payload, token);
+      if (response.status === 200) {
+        dispatch({
+          type: actionTypes.PERMISSION_UPDATE_SUCCESS,
+          payload: response.data,
+        });
+        return response.data;
+      } else {
+        dispatch({
+          type: actionTypes.PERMISSION_UPDATE_FAIL,
+          payload: response?.data?.message,
+        });
+        return response.data;
+      }
+    } catch (error: any) {
+      dispatch({
+        type: actionTypes.PERMISSION_UPDATE_FAIL,
         payload: error?.data?.message,
       });
       return error;
