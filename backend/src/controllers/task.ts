@@ -72,14 +72,14 @@ export const updateTask = async (req: any, res: any, io: any) => {
 export const getTasks = async (req: any, res: Response) => {
   try {
     const userId = req.user._id;
-    const { status } = req.query;
+    const { id } = req.query;
 
     // Build the filter object
     let filter: any = {};
 
     // If status is passed, add it to the filter
-    if (status == "my") {
-      filter.assignedTo = userId;
+    if (id) {
+      filter.assignedTo = id;
     }
 
     // Fetch tasks based on filter
