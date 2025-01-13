@@ -67,28 +67,28 @@ describe("LoginRegister Component", () => {
     ).toBeInTheDocument();
   });
 
-  //   test("should toggle to Login mode when clicked on 'Login'", async () => {
-  //     render(
-  //       <Provider store={store}>
-  //         <LoginRegister setIsLoggedIn={jest.fn()} />
-  //       </Provider>
-  //     );
+  test("should toggle to Login mode when clicked on 'Login'", async () => {
+    render(
+      <Provider store={store}>
+        <LoginRegister setIsLoggedIn={jest.fn()} />
+      </Provider>
+    );
 
-  //     // Wait for the element to render
-  //     await waitFor(() => screen.getByText("Login"));
+    // Wait for the Login button to appear
+    await waitFor(() => screen.getByRole("button", { name: /login/i }));
 
-  //     // Find the "Login" button more specifically
-  //     const loginButton = screen.getByRole("button", { name: /login/i });
+    // Find the Login button by its role and name
+    const loginButton = screen.getByRole("button", { name: /login/i });
 
-  //     // Simulate the click event
-  //     fireEvent.click(loginButton);
+    // Simulate the click event on the Login button
+    fireEvent.click(loginButton);
 
-  //     // Assert that the login button is now present
-  //     expect(loginButton).toBeInTheDocument();
+    // Assert that the Login button is now visible
+    expect(loginButton).toBeInTheDocument();
 
-  //     // You can also assert the presence of other login-specific elements
-  //     expect(
-  //       screen.getByPlaceholderText("Enter your password")
-  //     ).toBeInTheDocument();
-  //   });
+    // Also assert that other login-specific elements (like password input) are present
+    expect(
+      screen.getByPlaceholderText("Enter your password")
+    ).toBeInTheDocument();
+  });
 });

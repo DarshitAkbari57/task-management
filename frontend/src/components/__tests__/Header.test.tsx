@@ -1,5 +1,3 @@
-// Header.test.tsx
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom"; // For routing context
 import Header from "../header";
