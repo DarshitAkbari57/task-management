@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
     permissions: {
       type: [String],
       enum: ["add", "edit", "delete"],
-      default: ["view"],
+      default: [],
     },
   },
   {
