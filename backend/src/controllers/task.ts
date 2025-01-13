@@ -84,8 +84,8 @@ export const getTasks = async (req: any, res: Response) => {
 
     // Fetch tasks based on filter
     const tasks = await Task.find(filter)
-      .populate("assignedTo", "username role")
-      .populate("createdBy", "username role");
+      .populate("assignedTo")
+      .populate("createdBy");
 
     res.status(200).json({
       status: 200,
