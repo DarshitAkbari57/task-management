@@ -28,31 +28,33 @@ const permissionOptions: any = [
 
 const UsersPage: React.FC = () => {
   const dispatch = useDispatch();
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
 
   // Fetch the users from the Redux store
   const allUsers = useSelector((state: any) => state?.User?.allUsers);
 
   const handleStatusChange = async (id: string, value: string) => {
-    const user = users.find((user) => user._id === id);
-    console.log("taskId", id);
-    console.log("taskId newStatus", value);
-    if (user) {
-      const updatedData = {
-        role: user.role,
-        username: user.username,
-        email: user.email,
-        permissions: value, // value is the array of selected permissions
-      };
+    const updatedUsers = users.map((user) =>
+      user._id === id ? { ...user, permissions: value } : user
+    );
+    setUsers(updatedUsers); // Update the state locally
 
-      try {
+    // Now update the permission in the backend
+    try {
+      const user = users.find((user) => user._id === id);
+      if (user) {
+        const updatedData = {
+          role: user.role,
+          username: user.username,
+          email: user.email,
+          permissions: value, // value is the array of selected permissions
+        };
+
         // Dispatch the action to update the permission
-        const res = await dispatch(updatePermission(id, updatedData));
-        console.log("API response:", res);
-        // Optionally handle success or failure here (e.g., show a notification)
-      } catch (err) {
-        console.error("Error updating permission:", err);
+        await dispatch(updatePermission(id, updatedData));
       }
+    } catch (err) {
+      console.error("Error updating permission:", err);
     }
   };
 
@@ -100,6 +102,7 @@ const UsersPage: React.FC = () => {
           allowClear
           style={{ width: "250px" }}
           placeholder="Please select"
+          value={record?.permissions}
           onChange={(value) => handleStatusChange(record._id, value)}
           options={permissionOptions}
         />

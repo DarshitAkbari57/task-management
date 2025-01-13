@@ -46,6 +46,7 @@ const TaskPage: React.FC = () => {
   // Check if the user has permission to view Action column (edit or delete)
   const hasEditPermission = userPermissions.includes("edit");
   const hasDeletePermission = userPermissions.includes("delete");
+  const hasAddPermission = userPermissions.includes("add"); // Check for add permission
   const showActionColumn = hasEditPermission || hasDeletePermission;
 
   const allUser = useSelector((state: any) => state?.User?.allUsers);
@@ -64,6 +65,19 @@ const TaskPage: React.FC = () => {
       deadline: moment(task.deadline),
     }); // Prefill form with task data
     setIsModalVisible(true);
+  };
+
+  const getStatusBorderColor = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return "blue"; // Blue border for Pending status
+      case "In Progress":
+        return "orange"; // Orange border for In Progress status
+      case "Completed":
+        return "green"; // Green border for Completed status
+      default:
+        return "gray"; // Default border color (for undefined statuses)
+    }
   };
 
   const hideModal = () => {
@@ -127,8 +141,6 @@ const TaskPage: React.FC = () => {
   };
 
   const handleStatusChange = async (taskId: string, newStatus: string) => {
-    console.log("taskId", taskId);
-    console.log("newStatus", newStatus);
     try {
       // Update the status locally
       const updatedTasks = tasks.map((task) =>
@@ -172,9 +184,21 @@ const TaskPage: React.FC = () => {
       key: "status",
       render: (_: any, record: any) => (
         <Select
+          className="w-32"
           placeholder="Select status"
-          value={record.status} // Set the current status value
-          onChange={(value) => handleStatusChange(record._id, value)} // Handle status change
+          value={record.status}
+          onChange={(value) => handleStatusChange(record._id, value)}
+          style={{
+            borderColor: getStatusBorderColor(record.status),
+            border: "1px solid",
+            borderRadius: "6px",
+          }}
+          dropdownStyle={{
+            borderRadius: "6px",
+            borderColor: getStatusBorderColor(record.status),
+          }}
+          onFocus={(e) => (e.target.style.outline = "none")} // Remove default blue outline
+          onBlur={(e) => (e.target.style.outline = "none")}
         >
           <Select.Option value="Pending">Pending</Select.Option>
           <Select.Option value="In Progress">In Progress</Select.Option>
@@ -271,10 +295,12 @@ const TaskPage: React.FC = () => {
           <Select.Option value={"all"}>All</Select.Option>
           <Select.Option value={"my"}>My</Select.Option>
         </Select>
-        <Button type="primary" onClick={showAddModal}>
-          Add Task
-          {/* {TaskList()} */}
-        </Button>
+        {hasAddPermission && (
+          <Button type="primary" onClick={showAddModal}>
+            Add Task
+            {/* {TaskList()} */}
+          </Button>
+        )}
       </div>
       <Table columns={columns} dataSource={tasks} rowKey="_id" />
 
